@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
-import { ProfilesService } from './profiles/profiles.service';
-import { ProfilesController } from './profiles/profiles.controller';
 import {TypeOrmModule, TypeOrmModuleOptions} from "@nestjs/typeorm";
 import { ProfilesModule } from './profiles/profiles.module';
 import { AuthModule } from './auth/auth.module';
