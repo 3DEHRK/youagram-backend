@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
+import {ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
 import {ProfileEntity} from "../profiles/profile.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
@@ -12,27 +12,35 @@ export class AuthService {
                 private jwt: JwtService) {
     }
 
-    createProfile(username, password){
+    async createProfile(username, password){
+
+        if(await this.repo.findOne({where: {username}}))
+            throw new ConflictException('Username already exists');
+
         const profile = new ProfileEntity();
         profile.username = username;
         profile.password = password;
-        //TODO: encryption
-        this.repo.save(profile);
-        return 'ok';
+        //TODO: encrypt password!
+        await this.repo.save(profile);
+        return await this.jwtLogin(username);
     }
 
-    async login(username, password){
+    async login(username: string, password){
         const user = await this.repo.findOne({where:{username}});
 
         if(!user)
             throw new UnauthorizedException('Invalid credentials');
 
         if(user.password === password){
-            const jwtPayload = {username};
-            const jwtToken = await this.jwt.signAsync(jwtPayload);
-            return {token: jwtToken}
+            return this.jwtLogin(username);
         }else{
             throw new UnauthorizedException('Invalid credentials');
         }
+    }
+
+    async jwtLogin(username){
+        const jwtPayload = {username};
+        const jwtToken = await this.jwt.signAsync(jwtPayload);
+        return {token: jwtToken};
     }
 }

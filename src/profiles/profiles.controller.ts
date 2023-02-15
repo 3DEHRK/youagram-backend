@@ -21,7 +21,6 @@ export class ProfilesController {
 
     @Put()
     updateProfile(@Body() body, @Req() request){
-        //const jwt = request.headers.authorization.replace('Bearer ', '');
         const json = this.jwtService.decode(request.headers.bearer, {json: true}) as {username: string};
         return this.profilesService.updateProfile(body, json.username);
     }

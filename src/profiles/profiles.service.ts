@@ -25,20 +25,19 @@ export class ProfilesService {
         if(!username)
             return 'failed';
 
-        if(body.biography){
+        if(body.profile.biography){
             await this.repo.createQueryBuilder()
                 .update(ProfileEntity)
                 .where("username = :username", {username})
-                .set({biography: body.biography})
+                .set({biography: body.profile.biography})
                 .execute();
         }
 
-
-        if(body.profilePictureLink){
+        if(body.profile.profilePictureLink){
             await this.repo.createQueryBuilder()
                 .update(ProfileEntity)
                 .where("username = :username", {username})
-                .set({profilePictureLink: body.profilePictureLink})
+                .set({profilePictureLink: body.profile.profilePictureLink})
                 .execute();
         }
     }
