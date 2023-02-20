@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import {Column, PrimaryGeneratedColumn, Repository} from "typeorm";
 import {ProfileEntity} from "./profile.entity";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -12,18 +12,18 @@ export class ProfilesService {
     ) {
     }
 
-    getProfiles() {
+    async getProfiles() {
         return this.repo.createQueryBuilder('profile').getMany();
     }
 
-    getProfileByName(username) {
+    async getProfileByName(username) {
         return this.repo.findOne({where: {username}});
     }
 
     async updateProfile(body, username) {
 
         if(!username)
-            return 'failed';
+            throw new UnauthorizedException('Invalid token');
 
         if(body.profile.biography){
             await this.repo.createQueryBuilder()

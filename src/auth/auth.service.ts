@@ -3,6 +3,7 @@ import {ProfileEntity} from "../profiles/profile.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {JwtService} from "@nestjs/jwt";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -14,13 +15,18 @@ export class AuthService {
 
     async createProfile(username, password){
 
+        if(username === '')
+            throw new HttpException('Enter username', 406);
+
         if(await this.repo.findOne({where: {username}}))
-            throw new ConflictException('Username already exists');
+            throw new ConflictException('Username already taken');
+
+        const hash = await bcrypt.hash(password, 10);
 
         const profile = new ProfileEntity();
         profile.username = username;
-        profile.password = password;
-        //TODO: encrypt password!
+        profile.password = hash;
+
         await this.repo.save(profile);
         return await this.jwtLogin(username);
     }
@@ -31,7 +37,9 @@ export class AuthService {
         if(!user)
             throw new UnauthorizedException('Invalid credentials');
 
-        if(user.password === password){
+        const isMatch = await bcrypt.compare(password, user.password)
+
+        if(isMatch){
             return this.jwtLogin(username);
         }else{
             throw new UnauthorizedException('Invalid credentials');
