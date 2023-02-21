@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import {Column, PrimaryGeneratedColumn, Repository} from "typeorm";
 import {ProfileEntity} from "./profile.entity";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -40,5 +40,6 @@ export class ProfilesService {
                 .set({profilePictureLink: body.profile.profilePictureLink})
                 .execute();
         }
+        //TODO: OK response
     }
 }
