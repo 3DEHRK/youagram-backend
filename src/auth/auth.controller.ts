@@ -7,7 +7,7 @@ export class AuthController {
     ) {
     }
 
-    @Put('register')
+    @Post('register')
     createProfile(@Body() body){
         const {username, password} = body;
         return this.authService.createProfile(username, password);

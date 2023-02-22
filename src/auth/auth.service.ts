@@ -20,7 +20,7 @@ export class AuthService {
         if(!username)
             throw new HttpException("Username can't be empty", 406);
 
-        if(username.length > 30)
+        if(username.length > 32)
             throw new HttpException("Username is too long", 406);
 
         if(!password)

@@ -20,18 +20,13 @@ export class ProfilesService {
         return this.repo.findOne({where: {username}});
     }
 
-    async updateProfile(body, username) {
+    async updateProfile(body, username){
 
         if(!username)
             throw new UnauthorizedException('Invalid token');
 
-        if(body.profile.biography){
-            await this.repo.createQueryBuilder()
-                .update(ProfileEntity)
-                .where("username = :username", {username})
-                .set({biography: body.profile.biography})
-                .execute();
-        }
+        if(body.profile.profilePictureLink.length > 255)
+            throw new HttpException("Link max 255 characters",406);
 
         if(body.profile.profilePictureLink){
             await this.repo.createQueryBuilder()
@@ -40,6 +35,17 @@ export class ProfilesService {
                 .set({profilePictureLink: body.profile.profilePictureLink})
                 .execute();
         }
-        //TODO: OK response
+
+        if(body.profile.biography.length > 1000)
+            throw new HttpException("Biography max 1000 characters",406);
+
+        if(body.profile.biography){
+            await this.repo.createQueryBuilder()
+                .update(ProfileEntity)
+                .where("username = :username", {username})
+                .set({biography: body.profile.biography})
+                .execute();
+        }
+        return true;
     }
 }

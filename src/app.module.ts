@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import {TypeOrmModule, TypeOrmModuleOptions} from "@nestjs/typeorm";
 import { ProfilesModule } from './profiles/profiles.module';
 import { AuthModule } from './auth/auth.module';
+import { ProfileContentService } from './profile-content/profile-content.service';
+import { ProfileContentModule } from './profile-content/profile-content.module';
 
 const ormOptions: TypeOrmModuleOptions = {
   type: 'mysql',
@@ -17,7 +19,7 @@ const ormOptions: TypeOrmModuleOptions = {
 }
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ormOptions), ProfilesModule, AuthModule],
+  imports: [TypeOrmModule.forRoot(ormOptions), ProfilesModule, AuthModule, ProfileContentModule],
   controllers: [AppController],
   providers: [AppService],
 })

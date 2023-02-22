@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Header, Param, Put, Req} from '@nestjs/common';
+import {Body, Controller, Get, Header, HttpException, Param, Put, Req, Res} from '@nestjs/common';
 import {ProfilesService} from "./profiles.service";
 import {JwtService} from "@nestjs/jwt";
 
@@ -20,8 +20,10 @@ export class ProfilesController {
     }
 
     @Put()
-    updateProfile(@Body() body, @Req() request){
+    async updateProfile(@Body() body, @Req() request, @Res() res){
         const json = this.jwtService.decode(request.headers.bearer, {json: true}) as {username: string};
-        return this.profilesService.updateProfile(body, json.username);
+        if(await this.profilesService.updateProfile(body, json.username)){
+            res.status(200).send(JSON.stringify('Updated profile'));
+        }
     }
 }
