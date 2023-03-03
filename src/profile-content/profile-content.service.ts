@@ -1,4 +1,4 @@
-import {HttpException, Injectable} from '@nestjs/common';
+import { HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
 import {createQueryBuilder, Repository} from "typeorm";
 import {ProfileEntity} from "../profiles/profile.entity";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -38,5 +38,17 @@ export class ProfileContentService {
         link.title = title;
         link.profile = query;
         await this.linkRepo.save(link);
+    }
+
+    async deleteLink(param, username){
+
+        const query = await this.profileRepo.createQueryBuilder()
+          .where({username})
+          .getOne();
+
+        const query1 = await this.linkRepo.createQueryBuilder()
+          .delete()
+          .where({linkId: param, profile: query.profileId})
+          .execute();
     }
 }

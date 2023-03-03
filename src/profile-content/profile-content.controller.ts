@@ -20,8 +20,9 @@ export class ProfileContentController {
         return this.contentService.addLink(body.url, body.title, json.username);
     }
 
-    @Delete('link')
-    deleteLink(@Param() param){
-        throw new HttpException('Delete Endpoint Works', 420);
+    @Delete('link/:id')
+    deleteLink(@Param() param, @Req() request){
+        const json = this.jwtService.decode(request.headers.bearer, {json: true}) as {username: string};
+        return this.contentService.deleteLink(param.id, json.username);
     }
 }
